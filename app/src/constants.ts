@@ -1,0 +1,6 @@
+export const TESTNET_COUNTER_PACKAGE_ID = "0xTODO";
+//counter contract
+//export const DEVNET_COUNTER_PACKAGE_ID = "0xdd2acd54897cbd876d55f7467522d78b96e89c25a192c2d1c0502672a8b9aa81";
+//certificate contract
+export const DEVNET_COUNTER_PACKAGE_ID = "0xdf540b72fb081e3e94558c1817418773650f4a02469bfd4eb697909db893b125";
+export const MAINNET_COUNTER_PACKAGE_ID = "0xTODO";

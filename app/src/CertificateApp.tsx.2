@@ -1,0 +1,63 @@
+import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
+import { isValidSuiObjectId } from "@mysten/sui/utils";
+import { Box, Container, Flex, Heading } from "@radix-ui/themes";
+import { useState } from "react";
+import { Counter } from "./Counter";
+import { CreateCounter } from "./CreateCounter";
+import { Certificate } from "./Certificate";
+import { IssueCertificate } from "./IssueCertificate";
+
+function App() {
+  const currentAccount = useCurrentAccount();
+  const [studentAddress, setStudentAddress] = useState("");
+  const [course, setCourse] = useState("");
+  const [certificateId, setCertificateId] = useState("");
+  const [verificationResult, setVerificationResult] = useState(null);
+
+  const issueCertificate = async () => {
+    try {
+      const result = await sui.executeTransaction({
+        packageObjectId: PACKAGE_ID,
+        module: "certificate",
+        function: "issue_certificate",
+        arguments: [studentAddress, course, Date.now().toString(), "0xabcdef"],
+        gasBudget: 10000000,
+      });
+      console.log("Certificate Issued:", result);
+      alert("Certificate Issued Successfully!");
+    } catch (error) {
+      console.error("Error Issuing Certificate:", error);
+    }
+  };
+
+  const verifyCertificate = async () => {
+    try {
+      const cert = await sui.getObject({ id: certificateId });
+      setVerificationResult(cert);
+    } catch (error) {
+      console.error("Verification Failed:", error);
+      setVerificationResult(null);
+    }
+  };
+
+  return (
+    <div className="p-6 bg-gray-100 min-h-screen flex flex-col gap-4">
+      <h1 className="text-xl font-bold">Sui Blockchain Certificate System</h1>
+      <input type="text" placeholder="Student Address" className="p-2 border" value={studentAddress} onChange={(e) => setStudentAddress(e.target.value)} />
+      <input type="text" placeholder="Course Name" className="p-2 border" value={course} onChange={(e) => setCourse(e.target.value)} />
+      <button className="bg-blue-500 text-white p-2 rounded" onClick={issueCertificate}>Issue Certificate</button>
+
+      <input type="text" placeholder="Certificate ID" className="p-2 border" value={certificateId} onChange={(e) => setCertificateId(e.target.value)} />
+      <button className="bg-green-500 text-white p-2 rounded" onClick={verifyCertificate}>Verify Certificate</button>
+
+      {verificationResult && (
+        <div className="mt-4 p-4 bg-white shadow-md">
+          <h2 className="font-bold">Verification Result:</h2>
+          <pre>{JSON.stringify(verificationResult, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
