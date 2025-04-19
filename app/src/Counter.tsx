@@ -7,7 +7,7 @@ import {
 import type { SuiObjectData } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { Button, Flex, Heading, Text } from "@radix-ui/themes";
-import { useNetworkVariable } from "./networkConfig";
+import { useNetworkVariable } from "./networkConfigCounter";
 import { useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 

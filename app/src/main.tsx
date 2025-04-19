@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Theme } from "@radix-ui/themes";
 //import App from "./App.tsx";
 import App from "./CertificateApp.tsx";
+//import { networkConfig } from "./networkConfigCounter.ts";
 import { networkConfig } from "./networkConfig.ts";
 
 const queryClient = new QueryClient();

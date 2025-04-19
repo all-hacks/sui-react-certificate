@@ -1,63 +1,80 @@
+import { useState } from "react";
 import { Transaction } from "@mysten/sui/transactions";
-import { Button, Container, Box, TextField, Flex } from "@radix-ui/themes";
-import { useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
+import { Card, Button, Container, Box, TextField, Flex, Text } from "@radix-ui/themes";
+import { useSignAndExecuteTransaction, useSuiClient, useSuiClientQuery } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "./networkConfig";
 import ClipLoader from "react-spinners/ClipLoader";
 
-export function VerifyCertificate({
-  onCreated,
-}: {
-  onCreated: (id: string) => void;
-}) {
-  const counterPackageId = useNetworkVariable("counterPackageId");
+export function VerifyCertificate(
+{ certificateId }: { certificateId: string}
+) {
+  const certificatePackageId = useNetworkVariable("certificatePackageId");
   const suiClient = useSuiClient();
-  const {
-  	mutate: signAndExecute,
-  	isSuccess,
-  	isPending,
-  } = useSignAndExecuteTransaction();
 
-  function create() {
-  	const tx = new Transaction();
+  const [localCertificateId, setLocalCertificateId] = useState(certificateId);
+  const [studentName, setStudentName] = useState("");
+  const [courseName, setCourseName] = useState("");
+  const [institudeName, setInstitudeName] = useState("");
+  const [issuer, setIssuer] = useState("");
 
-  	tx.moveCall({
-  		arguments: [],
-  		target: `${counterPackageId}::counter::create`,
-  	});
+  function verify() {
 
-  	signAndExecute(
-  		{
-  			transaction: tx,
-  		},
-  		{
-  			onSuccess: async ({ digest }) => {
-  				const { effects } = await suiClient.waitForTransaction({
-  					digest: digest,
-  					options: {
-  						showEffects: true,
-  					},
-  				});
+        let certificate = getCertificateFields(data);
+        console.log(localCertificateId);
+	setInstitudeName("ABC College");
+  }
 
-  				onCreated(effects?.created?.[0]?.reference?.objectId!);
-  			},
-  		},
-  	);
+  const verifyAsync = async () => {
+    try {
+      let res = await suiClient.getObject({ id: localCertificateId, options: { showContent: true }});
+      //console.log(res.data.content);
+      let certificate = getCertificateFields(res.data);
+      console.log(certificate);
+      setInstitudeName("ABC College");
+      setStudentName(certificate.student);
+      setCourseName(certificate.course);
+      setIssuer(certificate.issuer);
+    } catch (e) {
+      console.log("fetch failed:", e);
+    }
   }
 
   return (
   	<Container>
-		<Box maxWidth="500px" height="64px">
-			<TextField.Root size="3" placeholder="key in your document id" />
+		<Box maxWidth="800px" height="64px">
+			<TextField.Root size="3" value={localCertificateId} onChange={(e) => setLocalCertificateId(e.target.value) } placeholder="key in your certificate id" />
 		</Box>
   		<Button
   			size="3"
   			onClick={() => {
-  				create();
+  				verifyAsync();
   			}}
-  			disabled={isSuccess || isPending}
   		>
-  			{isSuccess || isPending ? <ClipLoader size={20} /> : "Verify Certificate"}
+  			{"Verify Certificate"}
   		</Button>
+<br/><br/>
+                <Card>
+                <Container>
+                <Text as="label"><strong>{studentName}</strong></Text>
+                </Container>
+                <Container>
+                <Text>{courseName}</Text>
+                </Container>
+                <Container>
+                <Text>{institudeName}</Text>
+                </Container>
+                <Container>
+                <Text>{issuer}</Text>
+                </Container>
+                </Card>
   	</Container>
   );
+
+function getCertificateFields(data: SuiObjectData) {
+  if (data.content?.dataType !== "moveObject") {
+  	return null;
+  }
+
+  return data.content.fields as { issuer: string, student: string; course: string; issue_date: string; document_hash: string };
+}
 }

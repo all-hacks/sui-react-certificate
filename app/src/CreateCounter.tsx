@@ -53,7 +53,7 @@ export function CreateCounter({
   			}}
   			disabled={isSuccess || isPending}
   		>
-  			{isSuccess || isPending ? <ClipLoader size={20} /> : "Create Counter"}
+  			{isSuccess || isPending ? <ClipLoader size={20} /> : "Issue Certificate"}
   		</Button>
   	</Container>
   );

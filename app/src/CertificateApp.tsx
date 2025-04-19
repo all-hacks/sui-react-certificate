@@ -55,6 +55,7 @@ function App() {
   				) : (
   					<Heading>Please connect your wallet</Heading>
   				)}
+				{ certificateId ? <p> Id: {certificateId} </p> : null }
   			</Container>
   			<Container
   				mt="5"
