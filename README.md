@@ -3,6 +3,6 @@
 
 # educertchain.php is the slides
 
-app folder houses the react app
-move folder has the certificate contract
+. app folder houses the react app
+. move folder has the certificate contract
 
