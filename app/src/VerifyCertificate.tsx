@@ -16,6 +16,8 @@ export function VerifyCertificate(
   const [courseName, setCourseName] = useState("");
   const [institudeName, setInstitudeName] = useState("");
   const [issuer, setIssuer] = useState("");
+  const [documentHash, setDocumentHash] = useState("");
+
 
   function verify() {
 
@@ -34,6 +36,8 @@ export function VerifyCertificate(
       setStudentName(certificate.student);
       setCourseName(certificate.course);
       setIssuer(certificate.issuer);
+      let hexString = certificate.document_hash.map(num => String.fromCharCode(num)).join('');
+      setDocumentHash('0x'+hexString);
     } catch (e) {
       console.log("fetch failed:", e);
     }
@@ -65,6 +69,9 @@ export function VerifyCertificate(
                 </Container>
                 <Container>
                 <Text>{issuer}</Text>
+                </Container>
+                <Container>
+                <Text>{documentHash}</Text>
                 </Container>
                 </Card>
   	</Container>

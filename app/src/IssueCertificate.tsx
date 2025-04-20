@@ -20,9 +20,23 @@ export function IssueCertificate({
 
   const [studentName, setStudentName] = useState("alvis chin");
   const [courseName, setCourseName] = useState("business maanagement");
-  const [documentHash, setDocumentHash] = useState("0x1234567890abcdef");
+
+  //let hash;
+  //const docText = [ studentName, courseName].join('|');
+  //const hash = async () => { await hashDocument(docText) };
+  //hashDocument(docText).then((d) => hash = d);
+  //console.log(hash, docText);
+
+  const [documentHash, setDocumentHash] = useState("0xdf540b72fb081e3e94558c1817418");
 
   const account = useCurrentAccount();
+
+  async function hashDocument(input) {
+  const encoded = new TextEncoder().encode(input);
+  const buffer = await window.crypto.subtle.digest('SHA-256', encoded);
+  const hashArray = Array.from(new Uint8Array(buffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
 
   function issue() {
 
@@ -30,7 +44,8 @@ export function IssueCertificate({
         console.log({certificatePackageId});
 
   	let cert = tx.moveCall({
-  		arguments: [tx.pure.string(studentName), tx.pure.string(courseName), tx.pure.u64(0), tx.pure.vector('u8',[1,244,6,7])],
+//  		arguments: [tx.pure.string(studentName), tx.pure.string(courseName), tx.pure.u64(0), tx.pure.vector('u8',[1,244,6,7])],
+  		arguments: [tx.pure.string(studentName), tx.pure.string(courseName), tx.pure.u64(0), tx.pure.vector('u8',new TextEncoder().encode(documentHash.substring(2)))],
   		target: `${certificatePackageId}::certificate::issue_certificate`,
   	});
 
